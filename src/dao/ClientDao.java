@@ -106,11 +106,12 @@ public class ClientDao {
     }
 
     public void update(Client client) {
-        sql = "UPDATE tab_clients " +
+        sql = "UPDATE %s " +
                 "SET %s = ?, %s = ? " +
                 "WHERE %s = ?";
         sql = String.format(
                 sql,
+                ClientDtoMetadata.tableName,
                 ClientDtoMetadata.fullName,
                 ClientDtoMetadata.dateOfBorn,
                 ClientDtoMetadata.id
