@@ -6,6 +6,15 @@ public class Client {
     private long id;
     private String fullName;
     private Date dateOfBorn;
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public long getId() {
         return id;
@@ -37,6 +46,7 @@ public class Client {
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", dateOfBorn=" + dateOfBorn +
+                ", address=" + address +
                 '}';
     }
 }

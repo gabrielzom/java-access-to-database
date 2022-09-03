@@ -1,6 +1,7 @@
 package dao;
 
 import dto.ClientDtoMetadata;
+import model.Address;
 import model.Client;
 
 import java.sql.*;
@@ -10,18 +11,21 @@ import java.util.List;
 public class ClientDao {
     private static String sql;
     private final Connection connection;
-    public ClientDao(Connection connection) {
+    private final AddressDao addressDao;
+    public ClientDao(Connection connection, AddressDao addressDao) {
         this.connection = connection;
+        this.addressDao = addressDao;
     }
 
-    public void create(Client client) {
-        sql = "INSERT INTO %s VALUES (null, ?, ?)";
+    public void create(Client client, long addressId) {
+        sql = "INSERT INTO %s VALUES (null, ?, ?, ?)";
         sql = String.format(sql, ClientDtoMetadata.tableName);
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
             preparedStatement.setString(1, client.getFullName());
             preparedStatement.setDate(2, new Date(client.getDateOfBorn().getTime()));
+            preparedStatement.setLong(3, addressId);
 
             int result = preparedStatement.executeUpdate();
             System.out.printf("[LOG] Insert Client in database. Result: %s", result);
@@ -45,6 +49,7 @@ public class ClientDao {
                 client.setId(result.getLong(ClientDtoMetadata.id));
                 client.setFullName(result.getString(ClientDtoMetadata.fullName));
                 client.setDateOfBorn(result.getDate(ClientDtoMetadata.dateOfBorn));
+                client.setAddress(addressDao.findByPk(result.getLong("address_id")));
                 clients.add(client);
             }
             System.out.println("[LOG] Query all Clients in database.");

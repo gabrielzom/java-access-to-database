@@ -1,5 +1,7 @@
+import dao.AddressDao;
 import dao.ClientDao;
 import database.Database;
+import model.Address;
 import model.Client;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,18 +20,32 @@ public class Main {
             out.println(
                     "Id: " + client.getId() +
                     "\nNome: " + client.getFullName() +
-                    "\nNascimento: " + simpleDateFormat.format(client.getDateOfBorn())
+                    "\nNascimento: " + simpleDateFormat.format(client.getDateOfBorn()) +
+                    "\nEndereço: " + client.getAddress().full()
             );
             out.println("---------------------------------");
         }
     }
-    public static void readPropsOfClient(Scanner scanner, Client client) throws ParseException{
+    public static void readPropsOfClient(Scanner scanner, Client client, Address address) throws ParseException{
         DateFormat date = new SimpleDateFormat("dd/MM/yyyy");
 
         out.println("Informe o primeiro nome Cliente: ");
             client.setFullName(scanner.next());
         out.println("Informe a data de nascimento no formato [dd/mm/aaaa]: ");
             client.setDateOfBorn(date.parse(scanner.next()));
+        out.println("---- ENDEREÇO -----");
+        out.println("Informe o CEP do Cliente:");
+            address.setZipCode(scanner.next());
+        out.println("Informe o Logradouro do Cliente:");
+            address.setPublicPlace(scanner.next());
+        out.println("Informe o Número do imóvel do Cliente:");
+            address.setHomeNumber(scanner.next());
+        out.println("Informe o Bairro do Cliente:");
+            address.setDistrict(scanner.next());
+        out.println("Informe a Cidade do Cliente:");
+            address.setCity(scanner.next());
+        out.println("Informe o Estado do Cliente no formato [UF]: ");
+            address.setState(scanner.next());
     }
 
     public static long readIdOfClient(Scanner scanner) {
@@ -52,7 +68,10 @@ public class Main {
 
     public static void main(String[] args) throws ParseException {
         Scanner scanner = new Scanner(in);
-        ClientDao clientDao = new ClientDao(Database.createConnection());
+        var connection = Database.createConnection();
+        AddressDao addressDao = new AddressDao(connection);
+        ClientDao clientDao = new ClientDao(connection, addressDao);
+
 
         out.println("------ ACESSO AO BANCO DE DADOS ------");
         var option = menu(scanner);
@@ -65,8 +84,10 @@ public class Main {
                     break;
                 case 2:
                     Client client = new Client();
-                    readPropsOfClient(scanner, client);
-                    clientDao.create(client);
+                    Address address = new Address();
+                    readPropsOfClient(scanner, client, address);
+                    long addressId = addressDao.create(address);
+                    clientDao.create(client, addressId);
                     option = menu(scanner);
                     break;
                 case 3:
@@ -79,8 +100,9 @@ public class Main {
                     break;
                 case 5:
                     Client clientToUpdate = new Client();
+                    Address addressToUpdate = new Address();
                     clientToUpdate.setId(readIdOfClient(scanner));
-                    readPropsOfClient(scanner, clientToUpdate);
+                    readPropsOfClient(scanner, clientToUpdate, addressToUpdate);
                     clientDao.update(clientToUpdate);
                     option = menu(scanner);
                     break;
