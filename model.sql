@@ -24,6 +24,35 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `JAVA_ACCESS` /*!40100 DEFAULT CHARACTE
 USE `JAVA_ACCESS`;
 
 --
+-- Table structure for table `tab_addresses`
+--
+
+DROP TABLE IF EXISTS `tab_addresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tab_addresses` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `zip_code` varchar(20) NOT NULL,
+  `public_place` varchar(70) DEFAULT NULL,
+  `home_number` varchar(20) DEFAULT NULL,
+  `district` varchar(50) DEFAULT NULL,
+  `city` varchar(50) DEFAULT NULL,
+  `state` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tab_addresses`
+--
+
+LOCK TABLES `tab_addresses` WRITE;
+/*!40000 ALTER TABLE `tab_addresses` DISABLE KEYS */;
+INSERT INTO `tab_addresses` VALUES (1,'02987080','Rua_Palacio_Guanabara','679','Parque_Taipas','Sã_Paulo','SP'),(2,'2084991','Logra','2313','Bairro','Cidade','Estado'),(3,'02987100','Avenida_Fernando_Mendes_De_Almeida','810','Vila_Santo_Antônio','São_Paulo','SP');
+/*!40000 ALTER TABLE `tab_addresses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tab_clients`
 --
 
@@ -34,8 +63,11 @@ CREATE TABLE `tab_clients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `full_name` varchar(60) NOT NULL,
   `date_of_born` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `address_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `address_id` (`address_id`),
+  CONSTRAINT `tab_clients_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `tab_addresses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +76,7 @@ CREATE TABLE `tab_clients` (
 
 LOCK TABLES `tab_clients` WRITE;
 /*!40000 ALTER TABLE `tab_clients` DISABLE KEYS */;
-INSERT INTO `tab_clients` VALUES (null,'Recode Pro','2022-09-02 00:00:00');
+INSERT INTO `tab_clients` VALUES (8,'Gabriel','1999-03-19 00:00:00',2),(9,'Laio_Michel','1991-07-08 00:00:00',3);
 /*!40000 ALTER TABLE `tab_clients` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -57,4 +89,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-02 16:54:07
+-- Dump completed on 2022-09-03  3:37:31
