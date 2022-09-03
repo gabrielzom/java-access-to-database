@@ -1,12 +1,8 @@
 package dao;
 
-import dto.ClientDtoMetadata;
+import dto.AddressMetadataDto;
 import model.Address;
-import model.Client;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AddressDao {
     private static String sql;
@@ -18,7 +14,7 @@ public class AddressDao {
 
     public long create(Address address) {
         sql = "INSERT INTO %s VALUES (null, ?, ?, ?, ?, ?, ?)";
-        sql = String.format(sql, "tab_addresses");
+        sql = String.format(sql, AddressMetadataDto.tableName);
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -46,8 +42,8 @@ public class AddressDao {
         sql = "SELECT * FROM %s WHERE %s = ?";
         sql = String.format(
                 sql,
-                "tab_addresses",
-                "id"
+                AddressMetadataDto.tableName,
+                AddressMetadataDto.id
         );
 
         try {
@@ -59,13 +55,13 @@ public class AddressDao {
             Address address = new Address();
 
             if (result.next()) {
-                address.setId(result.getLong("id"));
-                address.setZipCode(result.getString("zip_code"));
-                address.setPublicPlace(result.getString("public_place"));
-                address.setHomeNumber(result.getString("home_number"));
-                address.setDistrict(result.getString("district"));
-                address.setCity(result.getString("city"));
-                address.setState(result.getString("state"));
+                address.setId(result.getLong(AddressMetadataDto.id));
+                address.setZipCode(result.getString(AddressMetadataDto.zipCode));
+                address.setPublicPlace(result.getString(AddressMetadataDto.publicPlace));
+                address.setHomeNumber(result.getString(AddressMetadataDto.homeNumber));
+                address.setDistrict(result.getString(AddressMetadataDto.district));
+                address.setCity(result.getString(AddressMetadataDto.city));
+                address.setState(result.getString(AddressMetadataDto.state));
             }
             return address;
 

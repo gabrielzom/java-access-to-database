@@ -3,108 +3,51 @@ import dao.ClientDao;
 import database.Database;
 import model.Address;
 import model.Client;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import utils.ClientIO;
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
 import java.util.Scanner;
-
 import static java.lang.System.*;
 
 public class Main {
-
-    public static void printClients(List<Client> clients) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        out.println("---------------------------------");
-        for (var client : clients) {
-            out.println(
-                    "Id: " + client.getId() +
-                    "\nNome: " + client.getFullName() +
-                    "\nNascimento: " + simpleDateFormat.format(client.getDateOfBorn()) +
-                    "\nEndereço: " + client.getAddress().full()
-            );
-            out.println("---------------------------------");
-        }
-    }
-    public static void readPropsOfClient(Scanner scanner, Client client, Address address) throws ParseException{
-        DateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-
-        out.println("Informe o primeiro nome Cliente: ");
-            client.setFullName(scanner.next());
-        out.println("Informe a data de nascimento no formato [dd/mm/aaaa]: ");
-            client.setDateOfBorn(date.parse(scanner.next()));
-        out.println("---- ENDEREÇO -----");
-        out.println("Informe o CEP do Cliente:");
-            address.setZipCode(scanner.next());
-        out.println("Informe o Logradouro do Cliente:");
-            address.setPublicPlace(scanner.next());
-        out.println("Informe o Número do imóvel do Cliente:");
-            address.setHomeNumber(scanner.next());
-        out.println("Informe o Bairro do Cliente:");
-            address.setDistrict(scanner.next());
-        out.println("Informe a Cidade do Cliente:");
-            address.setCity(scanner.next());
-        out.println("Informe o Estado do Cliente no formato [UF]: ");
-            address.setState(scanner.next());
-    }
-
-    public static long readIdOfClient(Scanner scanner) {
-        out.println("Informe o ID do Cliente: ");
-            return scanner.nextLong();
-    }
-
-    public static int menu(Scanner scanner) {
-        out.println(
-                "OPÇÕES: \n" +
-                        "[1] - Consultar Todos os Registros\n" +
-                        "[2] - Inserir Registro\n" +
-                        "[3] - Consultar Registro por ID\n" +
-                        "[4] - Deletar Registro por ID\n" +
-                        "[5] - Atualizar registro por ID\n" +
-                        "[0] - Encerrar Programa"
-        );
-        return scanner.nextInt();
-    }
-
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException, InterruptedException {
         Scanner scanner = new Scanner(in);
         var connection = Database.createConnection();
         AddressDao addressDao = new AddressDao(connection);
         ClientDao clientDao = new ClientDao(connection, addressDao);
+        ClientIO clientIO = new ClientIO();
 
 
         out.println("------ ACESSO AO BANCO DE DADOS ------");
-        var option = menu(scanner);
+        var option = clientIO.menu(scanner);
 
         while (option > 0 && option < 6) {
             switch (option) {
                 case 1:
-                    printClients(clientDao.findAll());
-                    option = menu(scanner);
+                    clientIO.printClients(clientDao.findAll());
+                    option = clientIO.menu(scanner);
                     break;
                 case 2:
                     Client client = new Client();
-                    Address address = new Address();
-                    readPropsOfClient(scanner, client, address);
+                    Address address = clientIO.readPropsOfClient(scanner, client);
                     long addressId = addressDao.create(address);
                     clientDao.create(client, addressId);
-                    option = menu(scanner);
+                    option = clientIO.menu(scanner);
                     break;
                 case 3:
-                    printClients(clientDao.findByPk(readIdOfClient(scanner)));
-                    option = menu(scanner);
+                    clientIO.printClients(clientDao.findByPk(clientIO.readIdOfClient(scanner)));
+                    option = clientIO.menu(scanner);
                     break;
                 case 4:
-                    clientDao.delete(readIdOfClient(scanner));
-                    option = menu(scanner);
+                    clientDao.delete(clientIO.readIdOfClient(scanner));
+                    option = clientIO.menu(scanner);
                     break;
                 case 5:
                     Client clientToUpdate = new Client();
-                    Address addressToUpdate = new Address();
-                    clientToUpdate.setId(readIdOfClient(scanner));
-                    readPropsOfClient(scanner, clientToUpdate, addressToUpdate);
+                    clientToUpdate.setId(clientIO.readIdOfClient(scanner));
+                    Address addressToUpdate = clientIO.readPropsOfClient(scanner, clientToUpdate);
                     clientDao.update(clientToUpdate);
-                    option = menu(scanner);
+                    option = clientIO.menu(scanner);
                     break;
             }
         }

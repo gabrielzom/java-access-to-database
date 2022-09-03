@@ -1,9 +1,7 @@
 package dao;
 
-import dto.ClientDtoMetadata;
-import model.Address;
+import dto.ClientMetadataDto;
 import model.Client;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class ClientDao {
 
     public void create(Client client, long addressId) {
         sql = "INSERT INTO %s VALUES (null, ?, ?, ?)";
-        sql = String.format(sql, ClientDtoMetadata.tableName);
+        sql = String.format(sql, ClientMetadataDto.tableName);
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
@@ -37,7 +35,7 @@ public class ClientDao {
 
     public List<Client> findAll() {
         sql = "SELECT * FROM %s";
-        sql = String.format(sql, ClientDtoMetadata.tableName);
+        sql = String.format(sql, ClientMetadataDto.tableName);
 
         try {
             Statement statement = this.connection.createStatement();
@@ -46,9 +44,9 @@ public class ClientDao {
 
             while (result.next()) {
                 Client client = new Client();
-                client.setId(result.getLong(ClientDtoMetadata.id));
-                client.setFullName(result.getString(ClientDtoMetadata.fullName));
-                client.setDateOfBorn(result.getDate(ClientDtoMetadata.dateOfBorn));
+                client.setId(result.getLong(ClientMetadataDto.id));
+                client.setFullName(result.getString(ClientMetadataDto.fullName));
+                client.setDateOfBorn(result.getDate(ClientMetadataDto.dateOfBorn));
                 client.setAddress(addressDao.findByPk(result.getLong("address_id")));
                 clients.add(client);
             }
@@ -65,8 +63,8 @@ public class ClientDao {
         sql = "SELECT * FROM %s WHERE %s = ?";
         sql = String.format(
                 sql,
-                ClientDtoMetadata.tableName,
-                ClientDtoMetadata.id
+                ClientMetadataDto.tableName,
+                ClientMetadataDto.id
         );
 
         try {
@@ -77,9 +75,9 @@ public class ClientDao {
 
             while (result.next()) {
                 Client client = new Client();
-                client.setId(result.getLong(ClientDtoMetadata.id));
-                client.setFullName(result.getString(ClientDtoMetadata.fullName));
-                client.setDateOfBorn(result.getDate(ClientDtoMetadata.dateOfBorn));
+                client.setId(result.getLong(ClientMetadataDto.id));
+                client.setFullName(result.getString(ClientMetadataDto.fullName));
+                client.setDateOfBorn(result.getDate(ClientMetadataDto.dateOfBorn));
                 clients.add(client);
             }
 
@@ -96,8 +94,8 @@ public class ClientDao {
         sql = "DELETE FROM %s WHERE %s = ?";
         sql = String.format(
                 sql,
-                ClientDtoMetadata.tableName,
-                ClientDtoMetadata.id
+                ClientMetadataDto.tableName,
+                ClientMetadataDto.id
         );
 
         try {
@@ -116,10 +114,10 @@ public class ClientDao {
                 "WHERE %s = ?";
         sql = String.format(
                 sql,
-                ClientDtoMetadata.tableName,
-                ClientDtoMetadata.fullName,
-                ClientDtoMetadata.dateOfBorn,
-                ClientDtoMetadata.id
+                ClientMetadataDto.tableName,
+                ClientMetadataDto.fullName,
+                ClientMetadataDto.dateOfBorn,
+                ClientMetadataDto.id
         );
 
         try {
