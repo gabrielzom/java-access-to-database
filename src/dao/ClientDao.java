@@ -1,6 +1,8 @@
 package dao;
 
+import dto.AddressMetadataDto;
 import dto.ClientMetadataDto;
+import model.Address;
 import model.Client;
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,8 +36,11 @@ public class ClientDao {
     }
 
     public List<Client> findAll() {
-        sql = "SELECT * FROM %s";
-        sql = String.format(sql, ClientMetadataDto.tableName);
+        sql = "SELECT client.id, full_name, date_of_born, " +
+                "address.zip_code, address.public_place, address.home_number, address.district, address.city, address.state " +
+                "FROM tab_clients client " +
+                "INNER JOIN tab_addresses address " +
+                "ON client.address_id = address.id";
 
         try {
             Statement statement = this.connection.createStatement();
@@ -44,10 +49,18 @@ public class ClientDao {
 
             while (result.next()) {
                 Client client = new Client();
+                client.address  = new Address();
+
                 client.setId(result.getLong(ClientMetadataDto.id));
                 client.setFullName(result.getString(ClientMetadataDto.fullName));
                 client.setDateOfBorn(result.getDate(ClientMetadataDto.dateOfBorn));
-                client.setAddress(addressDao.findByPk(result.getLong("address_id")));
+                client.address.setZipCode(result.getString(AddressMetadataDto.zipCode));
+                client.address.setPublicPlace(result.getString(AddressMetadataDto.publicPlace));
+                client.address.setHomeNumber(result.getString(AddressMetadataDto.homeNumber));
+                client.address.setDistrict(result.getString(AddressMetadataDto.district));
+                client.address.setCity(result.getString(AddressMetadataDto.city));
+                client.address.setState(result.getString(AddressMetadataDto.state));
+
                 clients.add(client);
             }
             System.out.println("[LOG] Query all Clients in database.");

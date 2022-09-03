@@ -6,7 +6,7 @@ public class Client {
     private long id;
     private String fullName;
     private Date dateOfBorn;
-    private Address address;
+    public Address address;
 
     public Address getAddress() {
         return address;
