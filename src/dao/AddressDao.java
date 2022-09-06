@@ -7,7 +7,6 @@ import java.sql.*;
 public class AddressDao {
     private static String sql;
     private final Connection connection;
-
     public AddressDao(Connection connection) {
         this.connection = connection;
     }

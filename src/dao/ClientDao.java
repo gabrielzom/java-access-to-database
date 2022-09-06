@@ -11,10 +11,8 @@ import java.util.List;
 public class ClientDao {
     private static String sql;
     private final Connection connection;
-    private final AddressDao addressDao;
-    public ClientDao(Connection connection, AddressDao addressDao) {
+    public ClientDao(Connection connection) {
         this.connection = connection;
-        this.addressDao = addressDao;
     }
 
     public void create(Client client, long addressId) {
@@ -37,7 +35,8 @@ public class ClientDao {
 
     public List<Client> findAll() {
         sql = "SELECT client.id, full_name, date_of_born, " +
-                "address.zip_code, address.public_place, address.home_number, address.district, address.city, address.state " +
+                "address.zip_code, address.public_place, address.home_number, " +
+                "address.district, address.city, address.state " +
                 "FROM tab_clients client " +
                 "INNER JOIN tab_addresses address " +
                 "ON client.address_id = address.id";
@@ -73,12 +72,14 @@ public class ClientDao {
     }
 
     public List<Client> findByPk(long clientId) {
-        sql = "SELECT * FROM %s WHERE %s = ?";
-        sql = String.format(
-                sql,
-                ClientMetadataDto.tableName,
-                ClientMetadataDto.id
-        );
+        sql = "SELECT client.id, full_name, date_of_born, " +
+                "address.zip_code, address.public_place, address.home_number, " +
+                "address.district, address.city, address.state " +
+                "FROM tab_clients client " +
+                "INNER JOIN tab_addresses address " +
+                "ON client.address_id = address.id " +
+                "WHERE client.id = ?";
+
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
@@ -86,11 +87,19 @@ public class ClientDao {
             var result = preparedStatement.executeQuery();
             List<Client> clients = new ArrayList<>();
 
-            while (result.next()) {
+            if (result.next()) {
                 Client client = new Client();
+                client.address = new Address();
+
                 client.setId(result.getLong(ClientMetadataDto.id));
                 client.setFullName(result.getString(ClientMetadataDto.fullName));
                 client.setDateOfBorn(result.getDate(ClientMetadataDto.dateOfBorn));
+                client.address.setZipCode(result.getString(AddressMetadataDto.zipCode));
+                client.address.setPublicPlace(result.getString(AddressMetadataDto.publicPlace));
+                client.address.setHomeNumber(result.getString(AddressMetadataDto.homeNumber));
+                client.address.setDistrict(result.getString(AddressMetadataDto.district));
+                client.address.setCity(result.getString(AddressMetadataDto.city));
+                client.address.setState(result.getString(AddressMetadataDto.state));
                 clients.add(client);
             }
 

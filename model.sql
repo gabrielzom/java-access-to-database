@@ -76,7 +76,7 @@ CREATE TABLE `tab_clients` (
 
 LOCK TABLES `tab_clients` WRITE;
 /*!40000 ALTER TABLE `tab_clients` DISABLE KEYS */;
-INSERT INTO `tab_clients` VALUES (1,'Laio_Michel','1991-07-08 00:00:00',1);
+INSERT INTO `tab_clients` VALUES (1,'Laio_Michel','1991-07-08 00:00:00', 1);
 /*!40000 ALTER TABLE `tab_clients` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

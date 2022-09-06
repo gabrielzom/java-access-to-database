@@ -14,7 +14,7 @@ public class Main {
         Scanner scanner = new Scanner(in);
         var connection = Database.createConnection();
         AddressDao addressDao = new AddressDao(connection);
-        ClientDao clientDao = new ClientDao(connection, addressDao);
+        ClientDao clientDao = new ClientDao(connection);
         ClientIO clientIO = new ClientIO();
 
 
