@@ -60,6 +60,7 @@ public class ClientDao {
                 client.address.setCity(result.getString(AddressMetadataDto.city));
                 client.address.setState(result.getString(AddressMetadataDto.state));
 
+
                 clients.add(client);
             }
             System.out.println("[LOG] Query all Clients in database.");
