@@ -8,6 +8,10 @@ public class Client {
     private Date dateOfBorn;
     public Address address;
 
+    public Client() {
+        this.address = new Address();
+    }
+
     public Address getAddress() {
         return address;
     }

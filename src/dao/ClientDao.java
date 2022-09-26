@@ -48,7 +48,6 @@ public class ClientDao {
 
             while (result.next()) {
                 Client client = new Client();
-                client.address  = new Address();
 
                 client.setId(result.getLong(ClientMetadataDto.id));
                 client.setFullName(result.getString(ClientMetadataDto.fullName));
